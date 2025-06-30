@@ -83,24 +83,39 @@ if not os.path.exists(WORKING_DIR):
 
 
 async def initialize_rag():
+    # rag = LightRAG(
+    #     working_dir=WORKING_DIR,
+    #     llm_model_func=ollama_model_complete,
+    #     llm_model_name=os.getenv("LLM_MODEL", "qwen2.5-coder:7b"),
+    #     llm_model_max_token_size=8192,
+    #     llm_model_kwargs={
+    #         "host": os.getenv("LLM_BINDING_HOST", "http://localhost:11434"),
+    #         "options": {"num_ctx": 8192},
+    #         "timeout": int(os.getenv("TIMEOUT", "300")),
+    #     },
+    #     embedding_func=EmbeddingFunc(
+    #         embedding_dim=int(os.getenv("EMBEDDING_DIM", "1024")),
+    #         max_token_size=int(os.getenv("MAX_EMBED_TOKENS", "8192")),
+    #         func=lambda texts: ollama_embed(
+    #             texts,
+    #             embed_model=os.getenv("EMBEDDING_MODEL", "bge-m3:latest"),
+    #             host=os.getenv("EMBEDDING_BINDING_HOST", "http://localhost:11434"),
+    #         ),
+    #     ),
+    # )
+
     rag = LightRAG(
         working_dir=WORKING_DIR,
-        llm_model_func=ollama_model_complete,
-        llm_model_name=os.getenv("LLM_MODEL", "qwen2.5-coder:7b"),
-        llm_model_max_token_size=8192,
-        llm_model_kwargs={
-            "host": os.getenv("LLM_BINDING_HOST", "http://localhost:11434"),
-            "options": {"num_ctx": 8192},
-            "timeout": int(os.getenv("TIMEOUT", "300")),
-        },
+        llm_model_func=ollama_model_complete,  # Use Ollama model for text generation
+        llm_model_name='llama3m', # Your model name
+        # Use Ollama embedding function
         embedding_func=EmbeddingFunc(
-            embedding_dim=int(os.getenv("EMBEDDING_DIM", "1024")),
-            max_token_size=int(os.getenv("MAX_EMBED_TOKENS", "8192")),
+            embedding_dim=768,
+            max_token_size=8192,
             func=lambda texts: ollama_embed(
                 texts,
-                embed_model=os.getenv("EMBEDDING_MODEL", "bge-m3:latest"),
-                host=os.getenv("EMBEDDING_BINDING_HOST", "http://localhost:11434"),
-            ),
+                embed_model="nomic-embed-text"
+            )
         ),
     )
 
@@ -147,6 +162,7 @@ async def main():
         print(f"Test dict: {test_text}")
         print(f"Detected embedding dimension: {embedding_dim}\n\n")
 
+        print("here is the new modifi")
         with open("./book.txt", "r", encoding="utf-8") as f:
             await rag.ainsert(f.read())
 

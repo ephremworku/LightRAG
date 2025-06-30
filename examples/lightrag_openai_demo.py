@@ -6,7 +6,7 @@ from lightrag import LightRAG, QueryParam
 from lightrag.llm.openai import gpt_4o_mini_complete, openai_embed
 from lightrag.kg.shared_storage import initialize_pipeline_status
 from lightrag.utils import logger, set_verbose_debug
-
+import datetime
 WORKING_DIR = "./dickens"
 
 
@@ -80,6 +80,10 @@ if not os.path.exists(WORKING_DIR):
 async def initialize_rag():
     rag = LightRAG(
         working_dir=WORKING_DIR,
+        kv_storage="PGKVStorage",
+        vector_storage="PGVectorStorage",
+        graph_storage="PGGraphStorage",
+        doc_status_storage="PGDocStatusStorage",
         embedding_func=openai_embed,
         llm_model_func=gpt_4o_mini_complete,
     )
@@ -131,8 +135,9 @@ async def main():
         print(f"Test dict: {test_text}")
         print(f"Detected embedding dimension: {embedding_dim}\n\n")
 
+        time = datetime.datetime.now().time().isoformat()
         with open("./book.txt", "r", encoding="utf-8") as f:
-            await rag.ainsert(f.read())
+            await rag.ainsert(f.read(), ids=f"this is the chat titl-and this is the user id-{time}")
 
         # Perform naive search
         print("\n=====================")
@@ -140,7 +145,7 @@ async def main():
         print("=====================")
         print(
             await rag.aquery(
-                "What are the top themes in this story?", param=QueryParam(mode="naive")
+                "how many topics are covered in the dataset context?", param=QueryParam(mode="naive")
             )
         )
 
@@ -150,7 +155,7 @@ async def main():
         print("=====================")
         print(
             await rag.aquery(
-                "What are the top themes in this story?", param=QueryParam(mode="local")
+                "how many topics are covered in the dataset context?", param=QueryParam(mode="local")
             )
         )
 
@@ -160,7 +165,7 @@ async def main():
         print("=====================")
         print(
             await rag.aquery(
-                "What are the top themes in this story?",
+                "how many topics are covered in the dataset context?",
                 param=QueryParam(mode="global"),
             )
         )
@@ -171,7 +176,7 @@ async def main():
         print("=====================")
         print(
             await rag.aquery(
-                "What are the top themes in this story?",
+                "how many topics are covered in the dataset context?",
                 param=QueryParam(mode="hybrid"),
             )
         )

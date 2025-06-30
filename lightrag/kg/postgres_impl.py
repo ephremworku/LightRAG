@@ -1479,7 +1479,7 @@ class PGGraphStorage(BaseGraphStorage):
     )
     async def upsert_node(self, node_id: str, node_data: dict[str, str]) -> None:
         """
-        Upsert a node in the Neo4j database.
+        Upsert a node in the PGGraph database.
 
         Args:
             node_id: The unique identifier for the node (used as label)

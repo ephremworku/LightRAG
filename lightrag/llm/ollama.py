@@ -60,7 +60,7 @@ async def _ollama_model_if_cache(
     if api_key:
         headers["Authorization"] = f"Bearer {api_key}"
 
-    ollama_client = ollama.AsyncClient(host=host, timeout=timeout, headers=headers)
+    ollama_client = ollama.AsyncClient(host=host, timeout=None, headers=headers)
 
     try:
         messages = []
